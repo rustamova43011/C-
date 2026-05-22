@@ -4,7 +4,7 @@
 #include <vector>
 #include <stdexcept>
 
-// ============================ КЛАСС MATRIX ============================
+// ====== КЛАСС MATRIX ======
 class Matrix {
 private:
     std::vector<std::vector<double>> data;
@@ -21,10 +21,10 @@ private:
 public:
     // Конструкторы
     Matrix() : rows(0), cols(0) {}
-    Matrix(int r, int c) : rows(r), cols(c) {
+    explicit Matrix(int r, int c) : rows(r), cols(c) {
         data.assign(rows, std::vector<double>(cols, 0.0));
     }
-    Matrix(int r, int c, double init) : rows(r), cols(c) {
+    explicit Matrix(int r, int c, double init) : rows(r), cols(c) {
         data.assign(rows, std::vector<double>(cols, init));
     }
     Matrix(const Matrix& other) = default;
@@ -132,24 +132,24 @@ public:
 
     // Определитель (сравнение с нулём напрямую)
     double determinant() const {
-        if (rows != cols)
+        if (rows != cols) //Проверка квадратности. Определитель существует только у квадратных матриц.
             throw std::invalid_argument("Определитель только для квадратных матриц");
-        Matrix temp = *this;
-        double det = 1.0;
+        Matrix temp = *this; //копия, чтобы не испортить оригинальную матрицу.
+        double det = 1.0; //нач.знач
         for (int i = 0; i < rows; ++i) {
-            int pivot = i;
+            int pivot = i; //Ищется строка с максимальным элементом.Чтобы избежать деления на маленькие числа и повысить устойчивость.
             for (int j = i + 1; j < rows; ++j)
                 if (std::fabs(temp.data[j][i]) > std::fabs(temp.data[pivot][i]))
                     pivot = j;
-            if (temp.data[pivot][i] == 0.0)
+            if (temp.data[pivot][i] == 0.0) //Проверка вырожденности. Если ведущий элемент 0 то определитель 0.
                 return 0.0;
             if (pivot != i) {
-                std::swap(temp.data[i], temp.data[pivot]);
-                det = -det;
+                std::swap(temp.data[i], temp.data[pivot]); //перестановка строк
+                det = -det; //перестановка строк меняет знак определителя.
             }
-            det *= temp.data[i][i];
+            det *= temp.data[i][i]; //умножение диагонали. После метода Гаусса determinant равен произведению диагональных элементов.
             for (int j = i + 1; j < rows; ++j) {
-                double factor = temp.data[j][i] / temp.data[i][i];
+                double factor = temp.data[j][i] / temp.data[i][i]; //обнуление под диагональю(глав шаг), factor-на сколько нужно вычесть текущую строку.
                 for (int k = i + 1; k < cols; ++k)
                     temp.data[j][k] -= factor * temp.data[i][k];
             }
@@ -158,7 +158,7 @@ public:
     }
 
     // Обратная матрица
-    Matrix inverse() const {
+    Matrix inverse() const { //Создаётся расширенная матрица:
         if (rows != cols)
             throw std::invalid_argument("Обратная матрица только для квадратных матриц");
         double det = determinant();
@@ -313,7 +313,7 @@ public:
     }
 };
 
-// ============================ ФУНКЦИИ ОФОРМЛЕНИЯ ============================
+// ====== ФУНКЦИИ ОФОРМЛЕНИЯ ======
 void printHeader(const std::string& title) {
     std::cout << "\n  === " << title << " ===\n";
 }
@@ -361,7 +361,7 @@ void printTypeCheck(const Matrix& m, const std::string& name) {
     std::cout << "  Нулевая:             " << (m.isZero() ? "Да" : "Нет") << "\n";
 }
 
-// ============================ ГЛАВНАЯ ФУНКЦИЯ ============================
+// ====== ГЛАВНАЯ ФУНКЦИЯ ======
 int main() {
     setlocale(LC_ALL, "Russian");
 
