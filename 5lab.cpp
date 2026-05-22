@@ -48,7 +48,7 @@ private:
     static int gcd(int a, int b) {
         a =abs(a);
         b =abs(b);
-        while (b != 0) {
+        while (b != 0) {  //исполн алгор Евклида
             int temp = b;
             b = a % b;
             a = temp;
@@ -73,7 +73,7 @@ public:
     Fraction() : numerator(0), denominator(1) {}
 
     // Конструктор от double через строковый разбор
-    Fraction(double value) {
+    explicit Fraction(double value) {
         // Преобразуем double в строку с максимальной точностью
         stringstream ss;
         ss << setprecision(numeric_limits<double>::max_digits10) << value;
@@ -89,7 +89,7 @@ public:
         else {
             string intPart = str.substr(0, dotPos);
             string fracPart = str.substr(dotPos + 1);
-            // Удаляем ведущие нули? Не нужно, просто считаем длину
+            
             int den = 1;
             for (size_t i = 0; i < fracPart.length(); ++i) den *= 10;
             denominator = den;
@@ -171,10 +171,10 @@ class MyVector {
 private:
     int* data;// указатель на массив
     int size; // текущее количество элементов
-    int capacity;// зарезервированная память
+    int capacity;// размер выд. памяти
 
     // Приватный метод: проверка и увеличение ёмкости
-    void EnsureCapacity(int newSize) {
+    void EnsureCapacity(int newSize) {  //если места не хватает: созд.нов.массив,коп-ся эл-ы, staryj ydalqetsa i menqetsq ukazatel-
         if (newSize <= capacity) return;
         int newCap = max(newSize, static_cast<int>(capacity * 1.5) + 1);
         int* newData = new int[newCap];
@@ -195,7 +195,7 @@ public:
         data = new int[capacity]();
     }
 
-    // Конструктор копирования
+    // Конструктор копирования. Создаёт независимую копию массива. Иначе было бы копирование только указателя.
     MyVector(const MyVector& other) : size(other.size), capacity(other.capacity) {
         data = new int[capacity];
         for (int i = 0; i < size; ++i) data[i] = other.data[i];
